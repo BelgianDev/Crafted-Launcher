@@ -1,46 +1,15 @@
 <script setup lang="ts">
-import { NConfigProvider, darkTheme, NNotificationProvider, NLayout, NLayoutSider, NModalProvider, NMenu } from 'naive-ui'
-import type { MenuOption } from 'naive-ui'
-import {h, ref} from "vue";
-import {Icon} from "@iconify/vue";
-import Home from "./menu/Home.vue";
-import Browse from "./menu/Browse.vue";
-import Library from "./menu/Library.vue";
+import { NConfigProvider, darkTheme, NNotificationProvider,NModalProvider } from 'naive-ui'
 import TopBar from "./component/TopBar.vue";
+import Main from "./windows/Main.vue";
+import Settings from "./windows/Settings.vue"
+import {GenericComponentMap} from "./main.ts";
+import {useNavigationStore} from "./scripts/NavigationStore.ts";
 
-const sideMenuCollapsed = ref<boolean>(false)
-const selectedMenu = ref<string>("browse");
-
-const menuOptions: MenuOption[] = [
-  {
-    label: "Home",
-    key: "home",
-    icon: () => h(Icon, { icon: "mdi:home" }),
-  },
-  {
-    label: "Browse",
-    key: "browse",
-    icon: () => h(Icon, { icon: "mdi:magnify" }),
-  },
-  {
-    label: "Library",
-    key: "library",
-    icon: () => h(Icon, { icon: "mdi:layers-triple" }),
-  },
-  {
-    key: "divider",
-    type: 'divider'
-  }
-]
-
-const menuContents = {
-  home: Home,
-  browse: Browse,
-  library: Library
-}
-
-function handleMenuSelection(key: string) {
-  selectedMenu.value = key;
+const navStore = useNavigationStore();
+const pages: GenericComponentMap = {
+  main: Main,
+  settings: Settings
 }
 </script>
 
@@ -49,23 +18,16 @@ function handleMenuSelection(key: string) {
     <n-notification-provider>
       <n-modal-provider>
         <TopBar/>
-        <n-layout has-sider style="height: calc(100vh - 64px);">
-          <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="sideMenuCollapsed"
-                          show-trigger @collapse="sideMenuCollapsed = true" @expand="sideMenuCollapsed = false">
-            <n-menu :collapsed="sideMenuCollapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions"
-                    @update:value="handleMenuSelection">
-
-            </n-menu>
-          </n-layout-sider>
-          <n-layout>
-            <component :is="menuContents[selectedMenu]" :key="selectedMenu"/>
-          </n-layout>
-        </n-layout>
+        <div style="height: calc(100vh - 64px);">
+          <component :is="pages[navStore.activeScreen]"/>
+        </div>
       </n-modal-provider>
     </n-notification-provider>
   </n-config-provider>
 </template>
 
 <style>
-
+#app {
+  max-width: 1920px;
+}
 </style>

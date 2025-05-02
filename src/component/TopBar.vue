@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import {NLayoutHeader, NPageHeader, NSpace, NAvatar, NDropdown, NButton, NModal, NCard} from "naive-ui";
+import {NLayoutHeader, NPageHeader, NAvatar, NDropdown, NModal} from "naive-ui";
 import type { DropdownOption } from "naive-ui";
 import {h, ref} from "vue";
 import {Icon} from "@iconify/vue";
-import Settings from "../menu/Settings.vue"
+import {useNavigationStore} from "../scripts/NavigationStore.ts";
 
-const displaySettings = ref<boolean>(false);
-
+const navStore = useNavigationStore();
 const accountOptions: DropdownOption[] = [
   {
     label: "Settings",
@@ -39,7 +38,7 @@ const accountOptions: DropdownOption[] = [
 
 function handleMenuClick(key: string) {
   if (key === "settings") {
-    displaySettings.value = true;
+    navStore.setActiveScreen("settings");
     return;
   }
 }

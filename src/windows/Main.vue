@@ -1,23 +1,15 @@
 <script setup lang="ts">
-import {
-  type MenuOption,
-  NAvatar,
-  NCard,
-  NDropdown,
-  NLayout,
-  NLayoutHeader,
-  NLayoutSider,
-  NMenu,
-  NPageHeader
-} from "naive-ui";
-import {h, ref} from "vue";
+import {type MenuOption, NLayout, NLayoutSider, NMenu} from "naive-ui";
+import {type Component, h, ref} from "vue";
 import {Icon} from "@iconify/vue";
-import Home from "./Home.vue";
-import Browse from "./Browse.vue";
-import Library from "./Library.vue";
+import Home from "../menu/Home.vue";
+import Browse from "../menu/Browse.vue";
+import Library from "../menu/Library.vue";
+import {type GenericComponentMap} from '../main.ts'
 
 const sideMenuCollapsed = ref<boolean>(false)
-const selectedMenu = ref<string>("browse");
+const selectedMenu = ref<string>("home");
+
 const menuOptions: MenuOption[] = [
   {
     label: "Home",
@@ -40,35 +32,30 @@ const menuOptions: MenuOption[] = [
   }
 ]
 
-const menuContents = {
+const menuContents: GenericComponentMap = {
   home: Home,
   browse: Browse,
   library: Library
 }
 
-
+function handleMenuSelection(key: string) {
+  selectedMenu.value = key;
+}
 </script>
 
 <template>
-  <n-layout has-sider style="height: 600px; max-width: 800px">
-    <n-page-header>
-      <template #title>
-        Settings
-      </template>
-    </n-page-header>
+  <n-layout has-sider style="height: 100%">
     <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="sideMenuCollapsed"
                     show-trigger @collapse="sideMenuCollapsed = true" @expand="sideMenuCollapsed = false">
-      <n-menu :collapsed="sideMenuCollapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions"
-              @update:value="handleMenuSelection">
-
-      </n-menu>
+      <n-menu :collapsed="sideMenuCollapsed" :collapsed-width="64" :collapsed-icon-size="24" :options="menuOptions"
+              @update:value="handleMenuSelection" :value="selectedMenu"/>
     </n-layout-sider>
-    <n-layout>
-      <component :is="menuContents[selectedMenu]" :key="selectedMenu"/>
+    <n-layout content-style="padding: 24px;">
+      <component :is="menuContents[selectedMenu]" style="overflow: hidden; max-height: 100%"/>
     </n-layout>
   </n-layout>
 </template>
 
-<script scoped>
+<style scoped>
 
-</script>
+</style>
